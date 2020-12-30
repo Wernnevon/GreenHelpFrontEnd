@@ -1,21 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-
+import Routes from './src/routes';
+import AppLoading from 'expo-app-loading';
+import { useFonts } from 'expo-font'
+import { Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold } from '@expo-google-fonts/nunito';
+// fonte: pianaforma
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+    Nunito_800ExtraBold,
+  });
+  if(!fontsLoaded){
+    return <AppLoading/>;
+  }
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Routes/>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
