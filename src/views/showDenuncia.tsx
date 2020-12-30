@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import img from '../../assets//green/Fundo.png'
 // import { Container } from './styles';
-export default function CreateDenuncia() {
+export default function ShowDenuncia() {
     const navigation = useNavigation();
     function handleNavigateToCreateDenuncia(){
         navigation.navigate('');

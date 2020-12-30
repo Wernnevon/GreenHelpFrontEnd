@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import CreateDenuncia from "./views/createDenuncia";
 import SentDenuncia from "./views/sentDennuncia";
 import ListDenuncia from "./views/listDenuncias";
+import ShowDenuncia from "./views/showDenuncia";
 // import { Container } from './styles';
 
 const { Navigator, Screen } = createStackNavigator();
@@ -32,6 +33,13 @@ export default function Routes() {
           }}
           name="ListDenuncia"
           component={ListDenuncia}
+        />
+        <Screen
+          options={{
+            headerShown: false
+          }}
+          name="ShowDenuncia"
+          component={ShowDenuncia}
         />
       </Navigator>
     </NavigationContainer>

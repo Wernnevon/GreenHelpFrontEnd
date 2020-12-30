@@ -14,6 +14,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import img from "../../assets//green/Fundo.png";
 import MapView, { MapEvent, Marker } from "react-native-maps";
 import { Audio } from 'expo-av';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 // import { Container } from './styles';
 export default function CreateDenuncia() {
@@ -32,20 +33,39 @@ export default function CreateDenuncia() {
 
   // variável criada para caontrolar visualamente a cor dos botões
   const [palying, setPlaying] = useState(false);
+
+  async function storeData (code: string) {
+    try {
+      await AsyncStorage.setItem(code, code)
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  async function getData(){
+    try {
+      const value = await AsyncStorage.getAllKeys()
+      if(value !== null) {
+       console.log(value);
+       return value
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  async function handleSaveAndNavigateToSentDenuncia(){
+      await storeData('202012300003');
+      navigation.navigate('SentDenuncia');
+
+    // Lembrar de limpar os dados após salvamento
+    // Lembrar de gerar o código para enviar para próxima tela;
+  }
   
   function clearSound(){
         console.log('Unloading Sound');
         setAudioUri(undefined)
         setPlaying(false)
   }
-
-  function handleSaveAndNavigateToSentDenuncia(){
-    navigation.navigate('SentDenuncia');
-    // Lembrar de limpar os dados após salvamento
-    // Lembrar de gerar o código para enviar para próxima tela;
-    // Lembrar de salvar o código em um arquivo no dispositivo;
-  }
-
 
   function handleNavigateToListDenuncia(){
     navigation.navigate('ListDenuncia');
@@ -69,9 +89,9 @@ export default function CreateDenuncia() {
   useEffect(() => {
     return sound
       ? () => {
-          console.log('Unloading Sound');
-          sound.unloadAsync(); 
-          setPlaying(false)
+        console.log('Unloading Sound');
+        sound.unloadAsync(); 
+        setPlaying(false)
         }
       : undefined;
   }, [sound]);

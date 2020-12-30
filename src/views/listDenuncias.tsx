@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   ImageBackground,
@@ -9,28 +9,68 @@ import {
 } from "react-native";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
-import img from '../../assets//green/Fundo.png'
+import img from '../../assets//green/Fundo.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // import { Container } from './styles';
-export default function CreateDenuncia() {
+export default function ListDenuncia() {
     const navigation = useNavigation();
+    const [codes, setCodes] = useState<string[]|undefined>([]);
+    const [searchCode, setSearchCode] = useState('');
+    const [filteredCodes, setFilteredCodes] = useState([])
+    async function getData(){
+      try {
+        const value = await AsyncStorage.getAllKeys()
+        if(value !== null) {
+         return value
+        }
+      } catch(e) {
+        console.log(e);
+      }
+    }
+    useEffect(() => {
+      getData().then(response=>{
+        setCodes(response);
+      })
+    }, []);
+
+    useEffect(()=>{
+      if(searchCode===''){
+        setFilteredCodes(codes);
+      }else{
+        setFilteredCodes(searchBar(searchCode));
+      }
+    }, [searchCode, codes])
+
     function handleGoBack(){
         navigation.goBack();
     }
+
+    function searchBar(value: string){
+      return codes?.filter(code=>code.includes(value));
+    }
+
+    function handleNavigateToShowDenuncia(code: string){
+      navigation.navigate('ShowDenuncia', {code});
+    }
+
   return (
     <View style={styles.container}>
       <ImageBackground source={img} style={styles.image}>
        <View style={styles.card}>
        <View style={styles.searchbarContainer}>
-         <TextInput style={styles.searchbarInput}></TextInput>
+         <TextInput value={searchCode} onChangeText={(text)=>{setSearchCode(text)}} style={styles.searchbarInput}></TextInput>
          <FontAwesome name="search" size={30} color="#57a983" />
        </View>
        <Text style={styles.title}>Minhas Denúncias</Text>
        <ScrollView>
-          <Text style={styles.number}>20203012001</Text>
-          <Text style={styles.number}>20203012001</Text>
-          <Text style={styles.number}>20203012001</Text>
-          <Text style={styles.number}>20203012001</Text>
-          <Text style={styles.number}>20203012001</Text>
+         {
+           (filteredCodes as string[]).map(code=> 
+            <TouchableOpacity onPress={()=>{handleNavigateToShowDenuncia(code)}}>
+              <Text key={code} style={styles.number}>{code}</Text>
+            </TouchableOpacity>
+            )
+         }
         </ScrollView>
         <View>
             <TouchableOpacity onPress={handleGoBack} style={styles.sendButton}>
