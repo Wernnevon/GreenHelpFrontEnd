@@ -17,6 +17,7 @@ import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import api from "../services/api";
+import { Status } from "../models/status";
 
 // import { Container } from './styles';
 export default function CreateDenuncia() {
@@ -58,11 +59,12 @@ export default function CreateDenuncia() {
   async function handleSaveAndNavigateToSentDenuncia(){
     const data = new FormData();
 
-    const code = String(Math.trunc(Math.random() * 10 ** 12))
+    const code = String(Math.trunc(Math.random() * 10 ** 12));
 
-    data.append('code', code)
-    data.append('latitude', String(position.latitude))
-    data.append('longitude', String(position.longitude))
+    data.append('code', code);
+    data.append('latitude', String(position.latitude));
+    data.append('longitude', String(position.longitude));
+    data.append('status', 'SOBANALISE')
 
     images.forEach((image, index) => {
       data.append('image', {
@@ -70,26 +72,26 @@ export default function CreateDenuncia() {
         type: 'image/jpg',
         uri: image,
       } as any)
-    })
+    });
 
     data.append('audio', {
       name: `audio.mp4a`,
       type: 'audio/mp4a',
       uri: audioUri
-    } as any)
+    } as any);
 
     await api.post('/', data).then(async () => {
       await storeData(code);
-
+      setImages([]);
+      setPosition({ latitude: 0, longitude: 0 });
+      clearSound();
       navigation.navigate('SentDenuncia', { code });
     }).catch((err) => {
-      console.log(err)
-    })
+      console.log(err);
+    });
 
     // Lembrar de limpar os dados após salvamento
-    // Lembrar de gerar o código para enviar para próxima tela;
   }
-  
   function clearSound(){
         console.log('Unloading Sound');
         setAudioUri(undefined)

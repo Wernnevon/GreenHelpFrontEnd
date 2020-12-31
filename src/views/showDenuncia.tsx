@@ -37,7 +37,7 @@ export default function ShowDenuncia() {
   const [images, setImages] = useState([])
   const [coordinates, setCoordinates] = useState({ latitude: 0, longitude: 0 })
   const [time, setTime] = useState('')
-  const [status, setStatus] = useState(0)
+  const [status, setStatus] = useState('')
 
   async function playSound() {
     console.log("Loading Sound");
@@ -81,14 +81,8 @@ export default function ShowDenuncia() {
   }, [])
 
   function feedback (value: boolean) {
-    const teste = new FormData();
-
-    teste.append('feedback', String(value))
-    teste.append('status', String(status))
-
-    console.log(teste)
-
-    api.put(`/${paramsId.code}`, teste).then(() => {
+    const denoucementUpdate = {feedback: value, status: status}
+    api.put(`/${paramsId.code}`, denoucementUpdate).then(() => {
       handleGoToHome()
     })
   }
