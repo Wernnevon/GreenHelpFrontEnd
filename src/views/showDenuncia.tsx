@@ -18,6 +18,7 @@ import { Audio } from "expo-av";
 import img from "../../assets//green/Fundo.png";
 import MapView, { Marker } from "react-native-maps";
 import api, { apiUrl } from "../services/api";
+import { State } from "react-native-gesture-handler";
 // import { Container } from './styles';
 
 interface ParamsCode {
@@ -78,6 +79,19 @@ export default function ShowDenuncia() {
       setTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString().slice(0, 5))
     })
   }, [])
+
+  function feedback (value: boolean) {
+    const teste = new FormData();
+
+    teste.append('feedback', String(value))
+    teste.append('status', String(status))
+
+    console.log(teste)
+
+    api.put(`/${paramsId.code}`, teste).then(() => {
+      handleGoToHome()
+    })
+  }
 
   function handleGoToHome() {
     navigation.navigate("CreateDenuncia");
@@ -150,7 +164,7 @@ export default function ShowDenuncia() {
             <Text style={styles.footer}>Esta denúncia foi resolvida?</Text>
             <View style={styles.socialBtnContainer}>
       <TouchableOpacity
-              onPress={()=>{}}
+              onPress={()=>{feedback(true)}}
               style={[styles.feedBackButton, {backgroundColor: '#3e4095',}]}
             >
               <AntDesign
@@ -160,7 +174,7 @@ export default function ShowDenuncia() {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={()=>{}}
+              onPress={()=>{feedback(false)}}
               style={[styles.feedBackButton, {backgroundColor: '#ed3237',}]}
             >
               <AntDesign
