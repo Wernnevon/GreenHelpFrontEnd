@@ -14,7 +14,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import img from "../../assets//green/Fundo.png";
 import MapView, { MapEvent, Marker } from "react-native-maps";
 import { Audio } from 'expo-av';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import api from "../services/api";
 
 // import { Container } from './styles';
 export default function CreateDenuncia() {
@@ -54,8 +56,36 @@ export default function CreateDenuncia() {
   }
 
   async function handleSaveAndNavigateToSentDenuncia(){
-      await storeData('202012300003');
+    const data = new FormData();
+
+    const code = String(Math.trunc(Math.random() * 10 ** 12))
+
+    data.append('code', code)
+    data.append('latitude', String(position.latitude))
+    data.append('longitude', String(position.longitude))
+
+    images.forEach((image, index) => {
+      data.append('image', {
+        name: `image_${index}.jpg`,
+        type: 'image/jpg',
+        uri: image,
+      } as any)
+    })
+
+    data.append('audio', {
+      name: `audio.mp4a`,
+      type: 'audio/mp4a',
+      uri: audioUri
+    } as any)
+
+    await api.post('/', data).then(async () => {
+      await storeData(code);
+      console.log('deu certo')
+
       navigation.navigate('SentDenuncia');
+    }).catch((err) => {
+      console.log(err)
+    })
 
     // Lembrar de limpar os dados após salvamento
     // Lembrar de gerar o código para enviar para próxima tela;
