@@ -66,8 +66,8 @@ export default function ListDenuncia() {
        <ScrollView>
          {
            (filteredCodes as string[]).map(code=> 
-            <TouchableOpacity onPress={()=>{handleNavigateToShowDenuncia(code)}}>
-              <Text key={code} style={styles.number}>{code}</Text>
+            <TouchableOpacity key={code} onPress={()=>{handleNavigateToShowDenuncia(code)}}>
+              <Text  style={styles.number}>{code}</Text>
             </TouchableOpacity>
             )
          }

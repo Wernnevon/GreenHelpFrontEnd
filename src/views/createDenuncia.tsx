@@ -353,15 +353,13 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   imageView: {
-    width: 200,
-    height: 180,
-    padding: 10,
-    marginHorizontal: 10,
-    borderColor: "#57a983",
-    borderWidth: 1.4,
+    width: 284,
+    resizeMode: "cover",
   },
   imagesContainer:{
-      height: 200,
+    width: '100%',
+    height: 200,
+    backgroundColor: '#000'
   },
   imageContainer: {
     flexDirection: "row",
@@ -463,5 +461,5 @@ lineAudioPlay:{
     borderRadius: 50,
     margin: 5,
   },
-
+  
 });
