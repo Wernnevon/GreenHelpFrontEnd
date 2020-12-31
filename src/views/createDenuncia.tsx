@@ -80,9 +80,8 @@ export default function CreateDenuncia() {
 
     await api.post('/', data).then(async () => {
       await storeData(code);
-      console.log('deu certo')
 
-      navigation.navigate('SentDenuncia');
+      navigation.navigate('SentDenuncia', { code });
     }).catch((err) => {
       console.log(err)
     })

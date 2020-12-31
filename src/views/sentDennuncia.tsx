@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, ImageBackground, View, Text } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
@@ -10,15 +10,17 @@ export default function CreateDenuncia() {
   function handleGoBack() {
     navigation.goBack();
   }
+
+  const route = useRoute();
+  const { code } = route.params as { code: string };
+
   return (
     <View style={styles.container}>
       <ImageBackground source={img} style={styles.image}>
         <View style={styles.card}>
           <Text style={styles.title}>Obrigado!</Text>
           <Text style={styles.label}>Consulte sua denúncia pelo número:</Text>
-          {/* por favor troque esse numero pelo código, se possivel passe-o como parametro de navegação
-          para facilitar seu trabalho*/}
-          <Text style={styles.number}>20203012001</Text>
+          <Text style={styles.number}>{code}</Text>
           <View>
             <TouchableOpacity onPress={handleGoBack} style={styles.sendButton}>
               <AntDesign name="back" size={40} color="#fff" />

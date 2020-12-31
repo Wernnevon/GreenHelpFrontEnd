@@ -16,7 +16,8 @@ import {
 } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import img from "../../assets//green/Fundo.png";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
+import api, { apiUrl } from "../services/api";
 // import { Container } from './styles';
 
 interface ParamsCode {
@@ -31,6 +32,11 @@ export default function ShowDenuncia() {
   const [palying, setPlaying] = useState(false);
   const [sound, setSound] = useState();
   const [audioUri, setAudioUri] = useState();
+
+  const [images, setImages] = useState([])
+  const [coordinates, setCoordinates] = useState({ latitude: 0, longitude: 0 })
+  const [time, setTime] = useState('')
+  const [status, setStatus] = useState(0)
 
   async function playSound() {
     console.log("Loading Sound");
@@ -57,6 +63,22 @@ export default function ShowDenuncia() {
       : undefined;
   }, [sound]);
 
+  useEffect(() => {
+    api.get(`/${paramsId.code}`).then(({ data }) => {
+      setImages(data.image)
+      setAudioUri(`${apiUrl}/audio/${data.description[0]}`)
+      setCoordinates({
+        latitude: parseFloat(data.latitude),
+        longitude: parseFloat(data.longitude)
+      })
+      setStatus(data.status)
+
+      const date = new Date(data.creationDate)
+
+      setTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString().slice(0, 5))
+    })
+  }, [])
+
   function handleGoToHome() {
     navigation.navigate("CreateDenuncia");
   }
@@ -71,29 +93,22 @@ export default function ShowDenuncia() {
           <ScrollView style={styles.card}>
             <View style={styles.labelContainer}>
               <Text style={styles.label}>Status: </Text>
-              <Text style={styles.statusLabel}>Resolvida</Text>
+              <Text style={styles.statusLabel}>{status}</Text>
             </View>
             <View style={styles.labelContainer}>
               <Text style={styles.label}>Data / Hora: </Text>
-              <Text style={styles.dateLabel}>30/12/2020 - 16:45</Text>
+              <Text style={styles.dateLabel}>{time}</Text>
             </View>
             <Text style={styles.label}>Imagem</Text>
             <View style={styles.imagesContainer}>
               <ScrollView horizontal pagingEnabled>
-                <Image
+                {images.map((image) => (
+                  <Image
+                  key={image}
                   style={styles.imageView}
-                  source={{
-                    uri:
-                      "https://upload.wikimedia.org/wikipedia/commons/7/76/Hendrik_Voogd_-_Italian_landscape_with_Umbrella_Pines.jpg",
-                  }}
+                  source={{ uri: `${apiUrl}/image/${image}` }}
                 />
-                <Image
-                  style={styles.imageView}
-                  source={{
-                    uri:
-                      "https://static.educalingo.com/img/en/800/landscape.jpg",
-                  }}
-                />
+                ))}
               </ScrollView>
             </View>
             <Text style={[styles.label, {marginTop: 20, marginBottom: 5}]}>Descrição</Text>
@@ -111,25 +126,25 @@ export default function ShowDenuncia() {
             </View>
             <Text style={styles.label}> Localização </Text>
         <View style={styles.mapContainer}>
-          <MapView
-            style={styles.map}
-            initialRegion={{
-              latitude: -6.726797023982828,
-              longitude: -38.44958135713743,
-              latitudeDelta: 0.008,
-              longitudeDelta: 0.008,
-            }}
-            onPress={()=>{}}
-          >
-               {/* {position.latitude !== 0 && (
-                
-                <Marker
-                    coordinate={{
-                        latitude:position.latitude, 
-                        longitude:position.longitude,
-                    }}
-                />)} */}
-          </MapView>
+          {coordinates.latitude !== 0 && (
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: coordinates.latitude,
+                longitude: coordinates.longitude,
+                latitudeDelta: 0.008,
+                longitudeDelta: 0.008,
+              }}
+              onPress={()=>{}}
+            >
+              <Marker
+                  coordinate={{
+                      latitude:coordinates.latitude, 
+                      longitude:coordinates.longitude,
+                  }}
+              />
+            </MapView>
+          )}
         </View>
           </ScrollView>
             <Text style={styles.footer}>Esta denúncia foi resolvida?</Text>
